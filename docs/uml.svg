@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1610" viewBox="0 0 1760 1610"><rect width="100%" height="100%" fill="white"/>
+<text x="40" y="40" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">CyberGuard - UML class diagram</text>
+<text x="40" y="78" font-family="Consolas,monospace" font-size="19" fill="#172b4d">Selected members | + public  - private | hollow triangle: inheritance | arrows: associations / uses</text>
+<rect x="40" y="120" width="260" height="84" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="152" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">Main</text>
+<polyline points="40,167 300,167" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="196" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ main(args): void</text>
+<rect x="430" y="120" width="420" height="192" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="444" y="152" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">ConsoleMenu</text>
+<polyline points="430,167 850,167" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="444" y="196" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- scanner: Scanner</text>
+<text x="444" y="223" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- manager: IncidentManager</text>
+<text x="444" y="250" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- storage: IncidentStorage</text>
+<text x="444" y="277" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- unsavedChanges: boolean</text>
+<text x="444" y="304" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ run(): void</text>
+<rect x="1100" y="120" width="610" height="138" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="1114" y="152" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">IncidentStorage</text>
+<polyline points="1100,167 1710,167" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="1114" y="196" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- file: Path</text>
+<text x="1114" y="223" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ save(ArrayList&lt;Incident&gt;): void</text>
+<text x="1114" y="250" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ load(): ArrayList&lt;Incident&gt;</text>
+<polyline points="300,160 430,160" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="417.0,167.0 430,160 417.0,153.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="850,175 1100,175" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1087.0,182.0 1100,175 1087.0,168.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="900" y="162" font-family="Consolas,monospace" font-size="19" fill="#172b4d">1          1</text>
+<rect x="40" y="440" width="500" height="246" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="472" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">IncidentManager</text>
+<polyline points="40,487 540,487" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="516" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- incidents: ArrayList&lt;Incident&gt;</text>
+<text x="54" y="543" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ addIncident(Incident): void</text>
+<text x="54" y="570" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ findIncident(int): Incident</text>
+<text x="54" y="597" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getNextId(): int</text>
+<text x="54" y="624" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getIncidents(): ArrayList&lt;Incident&gt;</text>
+<text x="54" y="651" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getSortedIncidents(): ArrayList</text>
+<text x="54" y="678" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ findByStatus(Status): ArrayList</text>
+<polyline points="560,312 560,385 280,385 280,440" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="273.0,427.0 280,440 287.0,427.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="290" y="370" font-family="Consolas,monospace" font-size="19" fill="#172b4d">1                1</text>
+<rect x="680" y="410" width="560" height="354" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="694" y="442" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">&lt;&lt;abstract&gt;&gt; Incident</text>
+<polyline points="680,457 1240,457" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="694" y="486" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- id: int</text>
+<text x="694" y="513" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- title, description: String</text>
+<text x="694" y="540" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- asset: Asset</text>
+<text x="694" y="567" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- severity: Severity</text>
+<text x="694" y="594" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- status: Status</text>
+<text x="694" y="621" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getId(), getTitle(), ...</text>
+<text x="694" y="648" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ setSeverity(Severity): void</text>
+<text x="694" y="675" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ changeStatus(Status): void</text>
+<text x="694" y="702" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getType(): String [abstract]</text>
+<text x="694" y="729" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getResponseAdvice(): String [abstract]</text>
+<text x="694" y="756" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ compareTo(Incident): int</text>
+<polyline points="540,530 680,530" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="667.0,537.0 680,530 667.0,523.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="545" y="512" font-family="Consolas,monospace" font-size="19" fill="#172b4d">0..1  0..*</text>
+<text x="545" y="575" font-family="Consolas,monospace" font-size="19" fill="#172b4d">records</text>
+<polygon points="540,530 551,523 562,530 551,537" fill="white" stroke="#4b5563"/>
+<rect x="1370" y="430" width="340" height="138" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="462" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">Asset</text>
+<polyline points="1370,477 1710,477" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="506" font-family="Consolas,monospace" font-size="19" fill="#172b4d">- name: String</text>
+<text x="1384" y="533" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ Asset(String)</text>
+<text x="1384" y="560" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getName(): String</text>
+<polyline points="1240,465 1370,465" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1357.0,472.0 1370,465 1357.0,458.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="1245" y="445" font-family="Consolas,monospace" font-size="19" fill="#172b4d">0..*    1</text>
+<rect x="1370" y="640" width="340" height="111" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="672" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">&lt;&lt;enum&gt;&gt; Severity</text>
+<polyline points="1370,687 1710,687" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="716" font-family="Consolas,monospace" font-size="19" fill="#172b4d">LOW, MEDIUM</text>
+<text x="1384" y="743" font-family="Consolas,monospace" font-size="19" fill="#172b4d">HIGH, CRITICAL</text>
+<rect x="1370" y="810" width="340" height="111" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="842" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">&lt;&lt;enum&gt;&gt; Status</text>
+<polyline points="1370,857 1710,857" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="1384" y="886" font-family="Consolas,monospace" font-size="19" fill="#172b4d">OPEN, INVESTIGATING</text>
+<text x="1384" y="913" font-family="Consolas,monospace" font-size="19" fill="#172b4d">RESOLVED</text>
+<polyline points="1240,660 1370,660" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1357.0,667.0 1370,660 1357.0,653.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1240,715 1300,715 1300,840 1370,840" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1357.0,847.0 1370,840 1357.0,833.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<rect x="40" y="820" width="470" height="84" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="852" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">&lt;&lt;interface&gt;&gt; Comparable&lt;Incident&gt;</text>
+<polyline points="40,867 510,867" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="896" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ compareTo(Incident): int</text>
+<polyline points="680,745 580,745 580,860 510,860" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="510,860 526.0,852.0 526.0,868.0 510,860" fill="white" stroke="#4b5563"/>
+<text x="530" y="800" font-family="Consolas,monospace" font-size="19" fill="#172b4d">implements</text>
+<rect x="620" y="940" width="500" height="111" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="972" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">PhishingIncident</text>
+<polyline points="620,987 1120,987" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="1016" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getType(): String</text>
+<text x="634" y="1043" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getResponseAdvice(): String</text>
+<rect x="1200" y="1030" width="510" height="111" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="1214" y="1062" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">MalwareIncident</text>
+<polyline points="1200,1077 1710,1077" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="1214" y="1106" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getType(): String</text>
+<text x="1214" y="1133" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ getResponseAdvice(): String</text>
+<polyline points="870,940 870,860 900,860 900,764" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="900,764 908.0,780.0 892.0,780.0 900,764" fill="white" stroke="#4b5563"/>
+<polyline points="1450,1030 1450,985 1190,985 1190,764" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="1190,764 1198.0,780.0 1182.0,780.0 1190,764" fill="white" stroke="#4b5563"/>
+<rect x="40" y="1040" width="490" height="111" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="1072" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">&lt;&lt;abstract&gt;&gt; IncidentFactory</text>
+<polyline points="40,1087 530,1087" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="1116" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ createIncident(...): Incident</text>
+<text x="54" y="1143" font-family="Consolas,monospace" font-size="19" fill="#172b4d">  [abstract]</text>
+<polyline points="690,312 690,350 15,350 15,1100 40,1100" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="27.0,1107.0 40,1100 27.0,1093.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="40" y="335" font-family="Consolas,monospace" font-size="19" fill="#172b4d">selects factory</text>
+<polyline points="1410,258 1410,330 25,330 25,1130 40,1130" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="27.0,1137.0 40,1130 27.0,1123.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<rect x="40" y="1270" width="490" height="84" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="1302" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">PhishingFactory</text>
+<polyline points="40,1317 530,1317" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="1346" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ createIncident(...): Incident</text>
+<rect x="620" y="1270" width="490" height="84" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="1302" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">MalwareFactory</text>
+<polyline points="620,1317 1110,1317" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="1346" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ createIncident(...): Incident</text>
+<polyline points="285,1270 285,1151" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="285,1151 293.0,1167.0 277.0,1167.0 285,1151" fill="white" stroke="#4b5563"/>
+<polyline points="865,1270 865,1200 470,1200 470,1151" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="470,1151 478.0,1167.0 462.0,1167.0 470,1151" fill="white" stroke="#4b5563"/>
+<polyline points="530,1310 565,1310 565,1010 620,1010" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="607.0,1017.0 620,1010 607.0,1003.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="540" y="1205" font-family="Consolas,monospace" font-size="19" fill="#172b4d">creates</text>
+<polyline points="1110,1310 1450,1310 1450,1141" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polyline points="1457.0,1154.0 1450,1141 1443.0,1154.0" fill="none" stroke="#4b5563" stroke-width="2"/>
+<text x="1350" y="1270" font-family="Consolas,monospace" font-size="19" fill="#172b4d">creates</text>
+<rect x="40" y="1450" width="380" height="57" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="54" y="1482" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">RuntimeException</text>
+<polyline points="40,1497 420,1497" fill="none" stroke="#758bad" stroke-width="2"/>
+<rect x="620" y="1450" width="540" height="84" fill="#f5f8fd" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="1482" font-family="Arial" font-size="23" fill="#172b4d" font-weight="bold">IncidentException</text>
+<polyline points="620,1497 1160,1497" fill="none" stroke="#758bad" stroke-width="2"/>
+<text x="634" y="1526" font-family="Consolas,monospace" font-size="19" fill="#172b4d">+ IncidentException(String message)</text>
+<polyline points="620,1480 420,1480" fill="none" stroke="#4b5563" stroke-width="2"/>
+<polygon points="420,1480 436.0,1472.0 436.0,1488.0 420,1480" fill="white" stroke="#4b5563"/>
+<text x="1200" y="1470" font-family="Consolas,monospace" font-size="19" fill="#172b4d">Incident and IncidentManager</text>
+<text x="1200" y="1500" font-family="Consolas,monospace" font-size="19" fill="#172b4d">throw IncidentException.</text>
+<text x="1200" y="1540" font-family="Consolas,monospace" font-size="19" fill="#172b4d">Storage reconstructs via factories.</text>
+</svg>
