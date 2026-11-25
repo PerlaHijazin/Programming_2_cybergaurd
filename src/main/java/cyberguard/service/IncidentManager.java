@@ -3,55 +3,48 @@ package cyberguard.service;
 import cyberguard.domain.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class IncidentManager {
-    private ArrayList<Incident> incidents;
-
-    public IncidentManager() {
-        this.incidents = new ArrayList<>();
-    }
+    private final List<Incident> incidents = new ArrayList<>();
 
     public int getNextId() {
         int max = 0;
-        for (Incident incident : this.incidents) {
-            if (incident.getId() > max) max = incident.getId();
-        }
-        if (max == Integer.MAX_VALUE) throw new IncidentException("No more IDs available.");
+        for (Incident incident : incidents) max = Math.max(max, incident.getId());
         return max + 1;
     }
 
     public void addIncident(Incident incident) {
         if (incident == null) throw new IncidentException("Incident is required.");
-        for (Incident existing : this.incidents) {
+        for (Incident existing : incidents) {
             if (existing.getId() == incident.getId()) {
-                throw new IncidentException("An incident with that ID already exists.");
+                throw new IncidentException("An incident with ID " + incident.getId() + " already exists.");
             }
         }
-        this.incidents.add(incident);
+        incidents.add(incident);
     }
 
     public Incident findIncident(int id) {
-        for (Incident incident : this.incidents) {
+        for (Incident incident : incidents) {
             if (incident.getId() == id) return incident;
         }
         throw new IncidentException("Incident not found: " + id);
     }
 
-    public ArrayList<Incident> getIncidents() {
-        return new ArrayList<>(this.incidents);
+    // Returns a copy so callers cannot change the manager's list directly.
+    public List<Incident> getIncidents() {
+        return new ArrayList<>(incidents);
     }
 
-    public ArrayList<Incident> getSortedIncidents() {
-        ArrayList<Incident> sorted = getIncidents();
+    public List<Incident> getSortedIncidents() {
+        List<Incident> sorted = getIncidents();
         Collections.sort(sorted);
         return sorted;
     }
 
-    public ArrayList<Incident> findByStatus(Status status) {
-        ArrayList<Incident> found = new ArrayList<>();
-        for (Incident incident : getSortedIncidents()) {
-            if (incident.getStatus() == status) found.add(incident);
-        }
+    public List<Incident> findByStatus(Status status) {
+        List<Incident> found = getSortedIncidents();
+        found.removeIf(incident -> incident.getStatus() != status);
         return found;
     }
 }

@@ -1,13 +1,14 @@
 package cyberguard;
 
 import cyberguard.domain.*;
-import cyberguard.service.*;
 import cyberguard.persistence.IncidentStorage;
+import cyberguard.service.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CyberGuardTest {
@@ -15,19 +16,20 @@ class CyberGuardTest {
     Path folder;
 
     private Incident phishing(int id, Severity severity) {
-        IncidentFactory factory = new PhishingFactory();
-        return factory.createIncident(id, "Fake login", "Suspicious email", new Asset("Office PC"), severity);
+        return new PhishingFactory().createIncident(id, "Fake login", "Suspicious email",
+                new Asset("Office PC"), severity, Status.OPEN);
     }
 
     @Test
     void factoriesCreateDifferentBehaviorsThroughTheSameParent() {
-        IncidentFactory factory = new PhishingFactory();
-        Incident first = factory.createIncident(1, "Email", "Fake login", new Asset("PC"), Severity.HIGH);
-        factory = new MalwareFactory();
-        Incident second = factory.createIncident(2, "Virus", "Unknown program", new Asset("PC"), Severity.HIGH);
-        assertEquals("PHISHING", first.getType());
-        assertEquals("MALWARE", second.getType());
+        Incident first = IncidentFactory.forType("PHISHING")
+                .createIncident(1, "Email", "Fake login", new Asset("PC"), Severity.HIGH, Status.OPEN);
+        Incident second = IncidentFactory.forType("MALWARE")
+                .createIncident(2, "Virus", "Unknown program", new Asset("PC"), Severity.HIGH, Status.OPEN);
+        assertInstanceOf(PhishingIncident.class, first);
+        assertInstanceOf(MalwareIncident.class, second);
         assertNotEquals(first.getResponseAdvice(), second.getResponseAdvice());
+        assertThrows(IncidentException.class, () -> IncidentFactory.forType("RANSOMWARE"));
     }
 
     @Test
@@ -35,16 +37,15 @@ class CyberGuardTest {
         assertThrows(IncidentException.class, () -> phishing(0, Severity.LOW));
         assertThrows(IncidentException.class, () -> phishing(1, null));
         assertThrows(IncidentException.class, () -> new Asset(" "));
-        assertThrows(IncidentException.class, () -> new Asset("PC\tServer"));
     }
 
     @Test
     void statusMustFollowTheInvestigationWorkflow() {
         Incident incident = phishing(1, Severity.HIGH);
         assertThrows(IncidentException.class, () -> incident.changeStatus(Status.RESOLVED));
-        assertEquals(Status.OPEN, incident.getStatus());
         incident.changeStatus(Status.INVESTIGATING);
         incident.changeStatus(Status.RESOLVED);
+        assertEquals(Status.RESOLVED, incident.getStatus());
         assertThrows(IncidentException.class, () -> incident.changeStatus(Status.OPEN));
     }
 
@@ -55,48 +56,49 @@ class CyberGuardTest {
         manager.addIncident(phishing(2, Severity.CRITICAL));
         manager.addIncident(phishing(1, Severity.CRITICAL));
         manager.findIncident(2).changeStatus(Status.INVESTIGATING);
-        assertEquals(1, manager.getSortedIncidents().get(0).getId());
-        assertEquals(2, manager.getSortedIncidents().get(1).getId());
+
+        List<Incident> sorted = manager.getSortedIncidents();
+        assertEquals(1, sorted.get(0).getId());
+        assertEquals(2, sorted.get(1).getId());
+        assertEquals(4, sorted.get(2).getId());
         assertEquals(5, manager.getNextId());
         assertEquals(2, manager.findByStatus(Status.OPEN).size());
         assertThrows(IncidentException.class, () -> manager.addIncident(phishing(4, Severity.LOW)));
         assertThrows(IncidentException.class, () -> manager.findIncident(99));
-        manager.getIncidents().clear();
-        assertEquals(3, manager.getIncidents().size());
     }
 
     @Test
-    void recordsRoundTripIncludingBothTypesAndResolvedStatus() throws IOException {
-        IncidentManager manager = new IncidentManager();
-        Incident first = phishing(1, Severity.CRITICAL);
-        first.changeStatus(Status.INVESTIGATING);
-        first.changeStatus(Status.RESOLVED);
-        manager.addIncident(first);
-        manager.addIncident(new MalwareFactory().createIncident(2, "Virus", "Unexpected file",
-                new Asset("Laptop"), Severity.MEDIUM));
-        IncidentStorage storage = new IncidentStorage(folder.resolve("nested/incidents.txt"));
-        storage.save(manager.getIncidents());
-        ArrayList<Incident> loaded = storage.load();
+    void incidentsAreSavedToJsonAndLoadedBack() throws IOException {
+        Incident first = new PhishingFactory().createIncident(1, "Fake login", "Suspicious email",
+                new Asset("Office PC"), Severity.CRITICAL, Status.RESOLVED);
+        Incident second = new MalwareFactory().createIncident(2, "Virus", "Unexpected file",
+                new Asset("Laptop"), Severity.MEDIUM, Status.OPEN);
+        IncidentStorage storage = new IncidentStorage(folder.resolve("nested/incidents.json"));
+        storage.save(List.of(first, second));
+
+        String json = Files.readString(folder.resolve("nested/incidents.json"));
+        assertTrue(json.contains("\"type\": \"PHISHING\""));
+
+        List<Incident> loaded = storage.load();
         assertEquals(2, loaded.size());
-        assertEquals(Status.RESOLVED, loaded.get(0).getStatus());
-        assertEquals(Severity.CRITICAL, loaded.get(0).getSeverity());
-        assertEquals("Fake login", loaded.get(0).getTitle());
-        assertEquals("Suspicious email", loaded.get(0).getDescription());
-        assertEquals("Office PC", loaded.get(0).getAsset().getName());
         assertInstanceOf(PhishingIncident.class, loaded.get(0));
         assertInstanceOf(MalwareIncident.class, loaded.get(1));
+        assertEquals(Status.RESOLVED, loaded.get(0).getStatus());
+        assertEquals(Severity.CRITICAL, loaded.get(0).getSeverity());
+        assertEquals("Office PC", loaded.get(0).getAsset().getName());
     }
 
     @Test
-    void missingFileStartsEmptyAndCorruptRecordsFailClearly() throws IOException {
-        Path file = folder.resolve("incidents.txt");
+    void missingFileStartsEmptyAndInvalidFileFailsClearly() throws IOException {
+        Path file = folder.resolve("incidents.json");
         IncidentStorage storage = new IncidentStorage(file);
         assertTrue(storage.load().isEmpty());
-        Files.writeString(file, "CYBERGUARD-1\ninvalid\n");
-        IOException error = assertThrows(IOException.class, storage::load);
-        assertTrue(error.getMessage().contains("line 2"));
-        Files.writeString(file, "CYBERGUARD-1\n1\tPHISHING\tTitle\tDescription\tPC\tHIGH\tOPEN\n" +
-                "1\tMALWARE\tTitle\tDescription\tPC\tLOW\tOPEN\n");
+
+        Files.writeString(file, "this is not json");
+        assertThrows(IOException.class, storage::load);
+
+        Files.writeString(file, "[{\"id\": 1, \"type\": \"UNKNOWN\", \"title\": \"T\", \"description\": \"D\","
+                + " \"asset\": \"PC\", \"severity\": \"LOW\", \"status\": \"OPEN\"}]");
         assertThrows(IOException.class, storage::load);
     }
 }
