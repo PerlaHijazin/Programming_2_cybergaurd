@@ -1,13 +1,13 @@
 package cyberguard.domain;
 
 public class Asset {
-    private String name;
+    private final String name;
 
     public Asset(String name) {
-        this.name = Incident.validateText(name, "Asset name");
+        this.name = Incident.requireText(name, "Asset name");
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 }

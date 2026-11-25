@@ -1,123 +1,120 @@
-# CyberGuard - Cybersecurity Incident Manager
+# CyberGuard – Cybersecurity Incident Manager
 
-Contributor: **Perla Hijazin**. MIT copyright identifier: **AMY253**.
+**Contributor:** Perla Hijazin (Neptun code: AMY253)
 
-CyberGuard is a console application for a small security team or student analyst who needs to record cybersecurity incidents and track their progress. It stores phishing and malware reports, their affected assets, severity, and investigation status between runs.
+CyberGuard is a console application for a small security team or student analyst who needs to record cybersecurity incidents and track their progress. It stores phishing and malware reports, the affected asset, severity, and investigation status, and keeps them between runs in a JSON file.
 
-This is a manual incident record manager. It does not scan devices or detect attacks.
+It is a manual record manager: it does not scan devices or detect attacks.
 
 ## Prerequisites
 
-- JDK 17 or newer (a JDK, not just a JRE)
-- Maven 3.6.3 or newer, or IntelliJ IDEA's bundled Maven
+- JDK 17 or newer
+- Maven 3.6.3 or newer (or IntelliJ IDEA's bundled Maven)
 
-No database or production third-party Java libraries are required. Maven needs internet access on the first build to download build plugins and JUnit.
+Maven downloads Gson (JSON library) and JUnit on the first build, so the first build needs internet access.
 
-## Open in IntelliJ IDEA
+## Build, test, and run
 
-1. Extract the project ZIP if necessary.
-2. In IntelliJ, choose **File > Open** and select the `CyberGuard` folder containing `pom.xml`.
-3. If asked, open it as a Maven project and trust it after reviewing the files.
-4. Set **File > Project Structure > Project SDK** to JDK 17 or newer.
-5. Allow Maven to finish importing. Use the Maven tool window's reload button if needed.
-6. Open `src/main/java/cyberguard/Main.java` and run its `main` method using the green arrow.
-7. Set the run configuration's **Working directory** to this project's folder. Data paths are relative to that folder.
-8. To run tests, open the Maven tool window, expand **Lifecycle**, and run **test**.
-9. To build the runnable JAR, run **package** in the same Maven tool window.
-
-## Build, test, and run from a terminal
-
-Run these commands from the project folder:
+From the project folder (the one containing `pom.xml`):
 
 ```sh
-mvn clean test
-mvn package
-java -jar target/cyberguard-1.0.0.jar
+mvn clean test       # run the JUnit tests
+mvn clean package    # build the runnable JAR
+java -jar target/cyberguard-1.0.0-jar-with-dependencies.jar
 ```
 
-If the terminal cannot find `mvn`, use IntelliJ's Maven tool window or install Maven and add its `bin` directory to PATH. No Maven wrapper is included.
+**In IntelliJ IDEA:** File > Open > select this folder, open as a Maven project, set the Project SDK to JDK 17+, then run `src/main/java/cyberguard/Main.java`. Tests: Maven tool window > Lifecycle > `test`.
+
+Data is saved to `data/incidents.json` relative to the working directory (the project folder when run as above).
 
 ## Sample usage
 
-Select `1` to add an incident, then enter:
+Choose `1` to add an incident, then enter:
 
 ```text
-Type: 1
+Type (1 Phishing, 2 Malware): 1
 Title: Fake university login
 Description: An email asks the user to enter their password
-Affected asset: Student laptop
-Severity: 3
+Affected asset (for example, Office PC): Student laptop
+Severity (1 LOW, 2 MEDIUM, 3 HIGH, 4 CRITICAL): 3
 ```
 
-The program creates incident #1 with type PHISHING, severity HIGH, and status OPEN.
+The program creates incident #1 (PHISHING, HIGH, OPEN).
 
-- Choose `2` to list incidents, highest severity first.
-- Choose `3`, enter ID `1`, and enter `4` to change its severity to CRITICAL.
-- Choose `4`, enter ID `1`, and enter `2` to begin investigating.
-- Choose `4` again, enter ID `1`, and enter `3` to resolve it.
-- Choose `5` and enter `3` to list resolved incidents.
-- Choose `6` to save, or `0` to save and exit.
-- Run the application again to see the saved incidents restored.
+- `2` lists incidents, highest severity first, with type-specific advice.
+- `3` → ID `1` → `4` changes severity to CRITICAL.
+- `4` → ID `1` → `2` starts the investigation; repeat with `3` to resolve it.
+- `5` → `3` lists resolved incidents.
+- `6` saves, `0` saves and exits. Run the program again and the incidents are restored.
 
-If you enter invalid input, the action is cancelled with a message; choose the menu option again to retry. An incident must progress through OPEN -> INVESTIGATING -> RESOLVED. It cannot skip investigation or reopen after resolution. Selecting the existing status is allowed.
+The saved file looks like this:
+
+```json
+[
+  {
+    "id": 1,
+    "type": "PHISHING",
+    "title": "Fake university login",
+    "description": "An email asks the user to enter their password",
+    "asset": "Student laptop",
+    "severity": "CRITICAL",
+    "status": "RESOLVED"
+  }
+]
+```
+
+Invalid input cancels the current action with a message. Status must move OPEN → INVESTIGATING → RESOLVED; it cannot skip a step or go back.
 
 ## Implemented requirements
 
-| Requirement | Implementation |
+| Requirement | Where |
 | --- | --- |
-| Encapsulation | Private fields, constructors, getters, controlled severity and status methods |
-| Abstraction | Abstract `Incident` and `IncidentFactory` classes |
-| Inheritance | `PhishingIncident` and `MalwareIncident` extend `Incident` |
-| Runtime polymorphism | A loop over `Incident` calls overridden `getResponseAdvice()` and `getType()` |
-| Relationships | A manager aggregates 0..* incidents; each incident holds one affected `Asset` |
-| Collections and generics | `ArrayList<Incident>` |
-| Sorting | `Comparable<Incident>`, critical first and then ascending ID |
-| Domain exception | `IncidentException` validates fields, IDs, duplicates, and status transitions |
-| Persistence | UTF-8 tab-separated text, try-with-resources, validation on load |
-| Pattern | Factory Method through two concrete factories |
-| Console UI | `ConsoleMenu` with numbered choices |
-| Build | Maven, JDK 17+, executable JAR |
-| Tests | JUnit 5 domain, manager, factory, and storage tests |
+| Encapsulation | All fields `private` (most `final`); state changes only through `setSeverity()` and `changeStatus()`, which validate input |
+| Abstraction | Abstract classes `Incident` and `IncidentFactory` |
+| Inheritance & runtime polymorphism | `PhishingIncident` and `MalwareIncident` extend `Incident` and override `getType()` / `getResponseAdvice()`; the menu only works with `Incident` references |
+| Relationships | `IncidentManager` 1 → 0..* `Incident` (aggregation); `Incident` 0..* → 1 `Asset` (association); `ConsoleMenu` composes a manager and a storage |
+| Collections & generics | `List<Incident>` / `ArrayList<Incident>` |
+| Sorting | `Incident implements Comparable<Incident>` (critical first, then by ID); a lambda filters by status |
+| Custom exception | `IncidentException` (unchecked) for domain rules: empty fields, invalid IDs, duplicate IDs, illegal status changes |
+| Persistence | JSON file via Gson, `try-with-resources`, invalid files reported clearly |
+| Design pattern | Factory Method (below) |
+| Build | Maven, JDK 17+ |
+| Tests | 6 JUnit 5 tests (`mvn clean test`) |
 
-## Factory Method pattern
+## Design pattern: Factory Method
 
-`IncidentFactory` declares `createIncident(...)`. `PhishingFactory` and `MalwareFactory` override it and return the appropriate concrete incident through the common `Incident` type. `ConsoleMenu` chooses a factory at runtime and calls the same method regardless of the chosen type. `IncidentStorage` uses the same factories when rebuilding saved records.
+**Problem:** the menu (when the user adds an incident) and the storage (when it rebuilds incidents from JSON) both need to create the right kind of incident without depending on concrete constructors.
 
-This keeps the construction of each incident type in its factory and keeps the menu's creation call independent of concrete incident constructors. Adding a type requires a new incident subclass, a new factory, and updates to the menu and loader's type selection. This is intentionally similar to the class exercise's character factories.
+**Participants:**
+- `IncidentFactory` (abstract creator) declares `createIncident(...)` and has `forType(String)` which returns the right factory for a type name.
+- `PhishingFactory` and `MalwareFactory` (concrete creators) override `createIncident(...)` and return a `PhishingIncident` or `MalwareIncident`.
+- `Incident` is the product type that the rest of the program uses.
+
+**Benefit:** `ConsoleMenu` and `IncidentStorage` share one creation path, and only work with `Incident`. Adding a new type means one new subclass, one new factory, and one line in `forType`.
 
 ## Project structure
 
 ```text
 src/main/java/cyberguard/
   Main.java
-  domain/       Incident, concrete incidents, Asset, Severity, Status, exception
-  service/      IncidentManager and factories
-  persistence/  IncidentStorage
+  domain/       Incident, PhishingIncident, MalwareIncident, Asset, Severity, Status, IncidentException
+  service/      IncidentManager, IncidentFactory, PhishingFactory, MalwareFactory
+  persistence/  IncidentStorage (JSON)
   ui/           ConsoleMenu
 src/test/java/cyberguard/CyberGuardTest.java
-docs/           UML, user stories, design notes, GitHub guide, release notes
+docs/           UML diagram (uml.md, rendered by GitHub; source uml.mmd), user stories, design notes, release notes
 ```
 
-See [UML diagram](docs/uml.svg), [editable UML source](docs/uml.mmd), [user stories](docs/user-stories.md), [design notes](docs/design.md), and [code walkthrough](docs/code-walkthrough.md).
-
-## Persistence and limitations
-
-Records are saved to `data/incidents.txt` relative to the working directory. The folder is created on the first save and excluded from Git. A header identifies the format; each record stores ID, type, title, description, asset, severity, and status. Tabs and line breaks are forbidden in free-text fields so that the simple file format remains unambiguous.
-
-The entire file is validated before any loaded records are used. A missing file starts a new empty collection. Invalid or duplicate records stop startup with an error, protecting the existing file from accidental overwrite. Save writes a temporary file before replacing the previous file. This is not a database transaction or a backup system.
-
-This version supports one local user, two incident types, one asset per incident, and no authentication, deletion, assignment to analysts, encryption, or concurrent edits. Save with option 6 or exit with option 0; forcibly closing the program can lose changes since the last save. Records may contain sensitive information: use fictional examples for coursework.
+See the [UML diagram](docs/uml.md), [user stories](docs/user-stories.md), [design decisions](docs/design.md), and [code walkthrough](docs/code-walkthrough.md).
 
 ## Tests
 
-`mvn clean test` executes six JUnit tests covering valid and invalid object creation, Factory Method polymorphism, status transitions, sorting and filtering, duplicate IDs, file round trips for both types, and corrupt/missing file handling.
+`mvn clean test` runs six JUnit 5 tests: factory polymorphism, validation, status workflow, sorting/filtering/IDs, JSON save and load for both types, and missing/invalid file handling.
 
-See [verification results](docs/verification.md) for the checks performed and a local Maven compiler restriction.
+## Known limitations
 
-## Repository and submission
+One local user; two incident types; one asset per incident; no deletion, login, encryption, or concurrent editing. Changes are saved with option `6` or `0` (or when input ends); force-closing the program loses unsaved changes. Use fictional data for coursework.
 
-The local code package does not create a GitHub repository, share access, create issues/PRs, or publish a release. Follow [the GitHub guide](docs/github-steps.md) for those required steps. The assignment states that the instructor should have access before development begins. Discuss the timing with the instructor if that step has not been completed.
+## License
 
-The assignment calls testing optional in one section but asks for passing JUnit tests in the submission checklist. Tests are included to satisfy the stricter checklist. The stated deadline is **29 November 2026**.
-
-License: [MIT](LICENSE).
+[MIT](LICENSE) – copyright identifier AMY253.
